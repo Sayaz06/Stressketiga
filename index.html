@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Stressketiga</title>
+
+  <link rel="manifest" href="manifest.json" />
+  <meta name="theme-color" content="#0f172a" />
+
+  <link rel="stylesheet" href="styles.css" />
+
+  <!-- Firebase SDKs (modular) -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+    import {
+      getAuth,
+      onAuthStateChanged,
+      GoogleAuthProvider,
+      signInWithPopup,
+      signOut
+    } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
+    import {
+      getFirestore,
+      collection,
+      doc,
+      addDoc,
+      getDoc,
+      getDocs,
+      updateDoc,
+      deleteDoc,
+      query,
+      where,
+      orderBy,
+      serverTimestamp
+    } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+
+    window._firebaseImports = {
+      initializeApp,
+      getAuth,
+      onAuthStateChanged,
+      GoogleAuthProvider,
+      signInWithPopup,
+      signOut,
+      getFirestore,
+      collection,
+      doc,
+      addDoc,
+      getDoc,
+      getDocs,
+      updateDoc,
+      deleteDoc,
+      query,
+      where,
+      orderBy,
+      serverTimestamp
+    };
+  </script>
+
+  <script defer src="firebase-config.js"></script>
+  <script defer src="app.js"></script>
+</head>
+<body>
+  <div id="app">
+
+    <!-- View: Loading -->
+    <div id="view-loading" class="view active-view">
+      <div class="center-screen">
+        <h1 class="app-title">Stressketiga</h1>
+        <p>Sedang memuatkan...</p>
+      </div>
+    </div>
+
+    <!-- View: Login (Page 1) -->
+    <div id="view-login" class="view">
+      <div class="center-screen">
+        <h1 class="app-title">Stressketiga</h1>
+        <p class="subtitle">Log perkembangan diri anda</p>
+        <button id="btn-google-login" class="btn primary-btn">
+          Log masuk dengan Google
+        </button>
+      </div>
+    </div>
+
+    <!-- View: Main menu (Page 2) -->
+    <div id="view-main" class="view">
+      <header class="top-bar">
+        <div>
+          <h2>Nota Nutrien + Suplemen + Air</h2>
+          <p id="user-email" class="subtext"></p>
+        </div>
+        <button id="btn-logout" class="btn ghost-btn small-btn">Log keluar</button>
+      </header>
+
+      <main class="content">
+        <div class="button-grid">
+          <button class="btn card-btn category-btn" data-category="vitamin">
+            Vitamin
+          </button>
+          <button class="btn card-btn category-btn" data-category="zat">
+            Zat
+          </button>
+          <button class="btn card-btn category-btn" data-category="zat-tambahan">
+            Zat Tambahan
+          </button>
+          <button class="btn card-btn category-btn" data-category="mineral">
+            Mineral
+          </button>
+          <button class="btn card-btn category-btn" data-category="mineral-jejak">
+            Mineral Jejak
+          </button>
+        </div>
+
+        <div class="button-grid">
+          <button class="btn card-btn accent" id="btn-log-suplemen">
+            Log Suplemen
+          </button>
+          <button class="btn card-btn accent" id="btn-log-air">
+            Log Air
+          </button>
+        </div>
+      </main>
+    </div>
+
+    <!-- View: Category list (Vitamin/Zat/Zat Tambahan/Mineral/Mineral Jejak) -->
+    <div id="view-category-list" class="view">
+      <header class="top-bar">
+        <button class="btn ghost-btn small-btn" data-nav="back-main">&larr; Kembali</button>
+        <h2 id="category-title"></h2>
+      </header>
+      <main class="content">
+        <div class="toolbar">
+          <button id="btn-add-category-item" class="btn primary-btn">Tambah</button>
+        </div>
+        <ul id="category-item-list" class="item-list"></ul>
+      </main>
+    </div>
+
+    <!-- View: Category item detail (3a1, 3b1, etc) -->
+    <div id="view-category-detail" class="view">
+      <header class="top-bar">
+        <button class="btn ghost-btn small-btn" data-nav="back-category">&larr; Kembali</button>
+        <h2 id="detail-title"></h2>
+      </header>
+      <main class="content">
+        <form id="detail-form" class="detail-form">
+          <label>
+            Fungsi Vitamin ini:
+            <textarea id="detail-fungsi"></textarea>
+          </label>
+          <label>
+            Kelebihan Vitamin ini:
+            <textarea id="detail-kelebihan"></textarea>
+          </label>
+          <label>
+            Vitamin ini tidak boleh dimakan bersama:
+            <textarea id="detail-tidak-bersama"></textarea>
+          </label>
+          <label>
+            Waktu Bila Vitamin Perlu Dimakan:
+            <textarea id="detail-waktu"></textarea>
+          </label>
+          <label>
+            Nota Tambahan:
+            <textarea id="detail-nota"></textarea>
+          </label>
+          <div class="form-actions">
+            <button type="button" id="btn-delete-detail" class="btn danger-btn">Padam</button>
+            <button type="submit" class="btn primary-btn">Simpan</button>
+          </div>
+        </form>
+      </main>
+    </div>
+
+    <!-- View: Log Suplemen (3f) -->
+    <div id="view-log-suplemen" class="view">
+      <header class="top-bar">
+        <button class="btn ghost-btn small-btn" data-nav="back-main">&larr; Kembali</button>
+        <h2>Log Suplemen</h2>
+      </header>
+      <main class="content">
+        <div class="button-grid">
+          <button class="btn card-btn log-period-btn" data-log-period="pagi">
+            Suplemen Pagi
+          </button>
+          <button class="btn card-btn log-period-btn" data-log-period="tengah-hari">
+            Suplemen Tengah Hari
+          </button>
+          <button class="btn card-btn log-period-btn" data-log-period="petang">
+            Suplemen Petang
+          </button>
+          <button class="btn card-btn log-period-btn" data-log-period="malam">
+            Suplemen Malam
+          </button>
+        </div>
+      </main>
+    </div>
+
+    <!-- View: Log Suplemen period list (3f1, 3f2, 3f3, 3f4) -->
+    <div id="view-log-period" class="view">
+      <header class="top-bar">
+        <button class="btn ghost-btn small-btn" data-nav="back-log-suplemen">&larr; Kembali</button>
+        <h2 id="log-period-title"></h2>
+      </header>
+      <main class="content">
+        <div class="toolbar">
+          <button id="btn-add-log-supplement" class="btn primary-btn">+ Tambah Suplemen</button>
+        </div>
+        <ul id="log-supplement-list" class="item-list"></ul>
+
+        <section class="section">
+          <h3>Sejarah Log</h3>
+          <ul id="log-history-list" class="item-list small-text"></ul>
+        </section>
+      </main>
+    </div>
+
+    <!-- View: Log Suplemen detail (3f1.1 etc) -->
+    <div id="view-log-detail" class="view">
+      <header class="top-bar">
+        <button class="btn ghost-btn small-btn" data-nav="back-log-period">&larr; Kembali</button>
+        <h2 id="log-detail-title"></h2>
+      </header>
+      <main class="content">
+        <form id="log-detail-form" class="detail-form">
+          <label>
+            Jumlah dos:
+            <textarea id="log-detail-dos"></textarea>
+          </label>
+          <label>
+            Status Jumlah Kapsul Suplemen
+            <textarea id="log-detail-status"></textarea>
+          </label>
+          <div class="form-actions">
+            <button type="button" id="btn-delete-log-detail" class="btn danger-btn">Padam</button>
+            <button type="submit" class="btn primary-btn">Simpan</button>
+          </div>
+        </form>
+      </main>
+    </div>
+
+    <!-- View: Log Air -->
+    <div id="view-log-air" class="view">
+      <header class="top-bar">
+        <button class="btn ghost-btn small-btn" data-nav="back-main">&larr; Kembali</button>
+        <h2>Log Air</h2>
+      </header>
+      <main class="content">
+        <div class="toolbar">
+          <button id="btn-add-water" class="btn primary-btn">
+            Tambah Jumlah Air (ML)
+          </button>
+        </div>
+        <p class="subtext" id="today-water-summary"></p>
+        <ul id="water-log-list" class="item-list small-text"></ul>
+      </main>
+    </div>
+
+  </div>
+</body>
+</html>
