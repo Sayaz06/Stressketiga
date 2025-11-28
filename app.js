@@ -24,6 +24,18 @@ function promptName(defaultValue = "") {
   return name.trim() === "" ? null : name.trim();
 }
 
+// Prefix label untuk kategori nutrien
+function getLabelPrefix(category) {
+  switch (category) {
+    case "vitamin": return "Vitamin";
+    case "zat": return "zat";
+    case "zat-tambahan": return "zat tambahan";
+    case "mineral": return "mineral";
+    case "mineral-jejak": return "mineral jejak";
+    default: return "item";
+  }
+}
+
 // ---------- Firebase init ----------
 
 document.addEventListener("DOMContentLoaded", async () => {
@@ -258,7 +270,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
   }
 
-  // ---------- Category detail ----------
+  // ---------- Category detail (dinamik label ikut kategori) ----------
 
   async function loadCategoryDetail() {
     const { doc, getDoc } = imports;
@@ -270,7 +282,20 @@ document.addEventListener("DOMContentLoaded", async () => {
       return;
     }
     const d = snap.data();
+    const prefix = getLabelPrefix(appState.category);
+
     detailTitleEl.textContent = d.name || "(Tanpa nama)";
+
+    // Update label teks ikut kategori
+    detailFungsi.parentElement.firstChild.textContent = `Fungsi ${prefix} ini: `;
+    detailKelebihan.parentElement.firstChild.textContent = `Kelebihan ${prefix} ini: `;
+    const capitalizedPrefix = prefix.charAt(0).toUpperCase() + prefix.slice(1);
+    detailTidakBersama.parentElement.firstChild.textContent =
+      `${capitalizedPrefix} ini tidak boleh dimakan bersama: `;
+    detailWaktu.parentElement.firstChild.textContent =
+      `Waktu Bila ${prefix} ini Perlu Dimakan: `;
+    detailNota.parentElement.firstChild.textContent = `Nota Tambahan: `;
+
     detailFungsi.value = d.fungsi || "";
     detailKelebihan.value = d.kelebihan || "";
     detailTidakBersama.value = d.tidakBersama || "";
@@ -619,6 +644,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     });
   }
 
-  // Mula dengan loading, auth listener akan tukar view
+  // Start
   showView("view-loading");
 });
