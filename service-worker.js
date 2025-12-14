@@ -1,6 +1,6 @@
 // service-worker.js
 
-const CACHE_NAME = "stressketiga-cache-v3";
+const CACHE_NAME = "stressketiga-cache-v5";
 const ASSETS = [
   "./",
   "./index.html",
@@ -46,5 +46,6 @@ self.addEventListener("fetch", (event) => {
     })
   );
 });
+
 
 
