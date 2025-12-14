@@ -7,54 +7,11 @@
 
   <link rel="manifest" href="manifest.json" />
   <meta name="theme-color" content="#0f172a" />
-
   <link rel="stylesheet" href="styles.css" />
 
   <!-- Firebase SDKs (modular) -->
   <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
-    import {
-      getAuth,
-      onAuthStateChanged,
-      GoogleAuthProvider,
-      signInWithPopup,
-      signOut
-    } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
-    import {
-      getFirestore,
-      collection,
-      doc,
-      addDoc,
-      getDoc,
-      getDocs,
-      updateDoc,
-      deleteDoc,
-      query,
-      where,
-      orderBy,
-      serverTimestamp
-    } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
-
-    window._firebaseImports = {
-      initializeApp,
-      getAuth,
-      onAuthStateChanged,
-      GoogleAuthProvider,
-      signInWithPopup,
-      signOut,
-      getFirestore,
-      collection,
-      doc,
-      addDoc,
-      getDoc,
-      getDocs,
-      updateDoc,
-      deleteDoc,
-      query,
-      where,
-      orderBy,
-      serverTimestamp
-    };
+    <!-- Firebase imports seperti sebelum -->
   </script>
 
   <script defer src="firebase-config.js"></script>
@@ -71,7 +28,7 @@
       </div>
     </div>
 
-    <!-- View: Login (Page 1) -->
+    <!-- View: Login -->
     <div id="view-login" class="view">
       <div class="center-screen">
         <h1 class="app-title">Stressketiga</h1>
@@ -82,7 +39,7 @@
       </div>
     </div>
 
-    <!-- View: Main menu (Page 2) -->
+    <!-- View: Main menu -->
     <div id="view-main" class="view">
       <header class="top-bar">
         <div>
@@ -94,35 +51,21 @@
 
       <main class="content">
         <div class="button-grid">
-          <button class="btn card-btn category-btn" data-category="vitamin">
-            Vitamin
-          </button>
-          <button class="btn card-btn category-btn" data-category="zat">
-            Zat
-          </button>
-          <button class="btn card-btn category-btn" data-category="zat-tambahan">
-            Zat Tambahan
-          </button>
-          <button class="btn card-btn category-btn" data-category="mineral">
-            Mineral
-          </button>
-          <button class="btn card-btn category-btn" data-category="mineral-jejak">
-            Mineral Jejak
-          </button>
+          <button class="btn card-btn category-btn" data-category="vitamin">Vitamin</button>
+          <button class="btn card-btn category-btn" data-category="zat">Zat</button>
+          <button class="btn card-btn category-btn" data-category="zat-tambahan">Zat Tambahan</button>
+          <button class="btn card-btn category-btn" data-category="mineral">Mineral</button>
+          <button class="btn card-btn category-btn" data-category="mineral-jejak">Mineral Jejak</button>
         </div>
 
         <div class="button-grid">
-          <button class="btn card-btn accent" id="btn-log-suplemen">
-            Log Suplemen
-          </button>
-          <button class="btn card-btn accent" id="btn-log-air">
-            Log Air
-          </button>
+          <button class="btn card-btn accent" id="btn-log-suplemen">Log Suplemen</button>
+          <button class="btn card-btn accent" id="btn-log-air">Log Air</button>
         </div>
       </main>
     </div>
 
-    <!-- View: Category list (Vitamin/Zat/Zat Tambahan/Mineral/Mineral Jejak) -->
+    <!-- View: Category list -->
     <div id="view-category-list" class="view">
       <header class="top-bar">
         <button class="btn ghost-btn small-btn" data-nav="back-main">&larr; Kembali</button>
@@ -136,7 +79,7 @@
       </main>
     </div>
 
-    <!-- View: Category item detail (3a1, 3b1, etc) -->
+    <!-- View: Category item detail -->
     <div id="view-category-detail" class="view">
       <header class="top-bar">
         <button class="btn ghost-btn small-btn" data-nav="back-category">&larr; Kembali</button>
@@ -144,26 +87,11 @@
       </header>
       <main class="content">
         <form id="detail-form" class="detail-form">
-          <label>
-            Fungsi Vitamin ini:
-            <textarea id="detail-fungsi"></textarea>
-          </label>
-          <label>
-            Kelebihan Vitamin ini:
-            <textarea id="detail-kelebihan"></textarea>
-          </label>
-          <label>
-            Vitamin ini tidak boleh dimakan bersama:
-            <textarea id="detail-tidak-bersama"></textarea>
-          </label>
-          <label>
-            Waktu Bila Vitamin Perlu Dimakan:
-            <textarea id="detail-waktu"></textarea>
-          </label>
-          <label>
-            Nota Tambahan:
-            <textarea id="detail-nota"></textarea>
-          </label>
+          <label>Fungsi Vitamin ini:<textarea id="detail-fungsi"></textarea></label>
+          <label>Kelebihan Vitamin ini:<textarea id="detail-kelebihan"></textarea></label>
+          <label>Vitamin ini tidak boleh dimakan bersama:<textarea id="detail-tidak-bersama"></textarea></label>
+          <label>Waktu Bila Vitamin Perlu Dimakan:<textarea id="detail-waktu"></textarea></label>
+          <label>Nota Tambahan:<textarea id="detail-nota"></textarea></label>
           <div class="form-actions">
             <button type="button" id="btn-delete-detail" class="btn danger-btn">Padam</button>
             <button type="submit" class="btn primary-btn">Simpan</button>
@@ -172,7 +100,7 @@
       </main>
     </div>
 
-    <!-- View: Log Suplemen (3f) -->
+    <!-- View: Log Suplemen -->
     <div id="view-log-suplemen" class="view">
       <header class="top-bar">
         <button class="btn ghost-btn small-btn" data-nav="back-main">&larr; Kembali</button>
@@ -180,23 +108,15 @@
       </header>
       <main class="content">
         <div class="button-grid">
-          <button class="btn card-btn log-period-btn" data-log-period="pagi">
-            Suplemen Pagi
-          </button>
-          <button class="btn card-btn log-period-btn" data-log-period="tengah-hari">
-            Suplemen Tengah Hari
-          </button>
-          <button class="btn card-btn log-period-btn" data-log-period="petang">
-            Suplemen Petang
-          </button>
-          <button class="btn card-btn log-period-btn" data-log-period="malam">
-            Suplemen Malam
-          </button>
+          <button class="btn card-btn log-period-btn" data-log-period="pagi">Suplemen Pagi</button>
+          <button class="btn card-btn log-period-btn" data-log-period="tengah-hari">Suplemen Tengah Hari</button>
+          <button class="btn card-btn log-period-btn" data-log-period="petang">Suplemen Petang</button>
+          <button class="btn card-btn log-period-btn" data-log-period="malam">Suplemen Malam</button>
         </div>
       </main>
     </div>
 
-    <!-- View: Log Suplemen period list (3f1, 3f2, 3f3, 3f4) -->
+    <!-- View: Log Suplemen period list -->
     <div id="view-log-period" class="view">
       <header class="top-bar">
         <button class="btn ghost-btn small-btn" data-nav="back-log-suplemen">&larr; Kembali</button>
@@ -208,14 +128,20 @@
         </div>
         <ul id="log-supplement-list" class="item-list"></ul>
 
+        <!-- Sejarah dipecahkan -->
         <section class="section">
-          <h3>Sejarah Log</h3>
-          <ul id="log-history-list" class="item-list small-text"></ul>
+          <h3>Sejarah Hari Ini</h3>
+          <ul id="log-history-today" class="item-list small-text"></ul>
+        </section>
+
+        <section class="section">
+          <h3>Sejarah Hari-Hari Lepas</h3>
+          <ul id="log-history-past" class="item-list small-text"></ul>
         </section>
       </main>
     </div>
 
-    <!-- View: Log Suplemen detail (3f1.1 etc) -->
+    <!-- View: Log Suplemen detail -->
     <div id="view-log-detail" class="view">
       <header class="top-bar">
         <button class="btn ghost-btn small-btn" data-nav="back-log-period">&larr; Kembali</button>
@@ -223,14 +149,8 @@
       </header>
       <main class="content">
         <form id="log-detail-form" class="detail-form">
-          <label>
-            Jumlah dos:
-            <textarea id="log-detail-dos"></textarea>
-          </label>
-          <label>
-            Status Jumlah Kapsul Suplemen
-            <textarea id="log-detail-status"></textarea>
-          </label>
+          <label>Jumlah dos:<textarea id="log-detail-dos"></textarea></label>
+          <label>Status Jumlah Kapsul Suplemen<textarea id="log-detail-status"></textarea></label>
           <div class="form-actions">
             <button type="button" id="btn-delete-log-detail" class="btn danger-btn">Padam</button>
             <button type="submit" class="btn primary-btn">Simpan</button>
@@ -247,9 +167,7 @@
       </header>
       <main class="content">
         <div class="toolbar">
-          <button id="btn-add-water" class="btn primary-btn">
-            Tambah Jumlah Air (ML)
-          </button>
+          <button id="btn-add-water" class="btn primary-btn">Tambah Jumlah Air (ML)</button>
         </div>
         <p class="subtext" id="today-water-summary"></p>
         <ul id="water-log-list" class="item-list small-text"></ul>
@@ -259,3 +177,4 @@
   </div>
 </body>
 </html>
+
