@@ -486,34 +486,54 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
   }
 
-  async function loadLogHistory() {
-    if (!appState.user || !appState.logPeriod) return;
-    const { collection, query, where, orderBy, getDocs } = imports;
-    logHistoryListEl.innerHTML = "<li>Memuatkan...</li>";
-    try {
-      const q = query(
-        collection(db, "suplemenLogs"),
-        where("userId", "==", appState.user.uid),
-        where("period", "==", appState.logPeriod),
-        orderBy("createdAt", "desc")
-      );
-      const snap = await getDocs(q);
-      logHistoryListEl.innerHTML = "";
-      if (snap.empty) {
-        logHistoryListEl.innerHTML = "<li class='empty'>Belum ada log.</li>";
-        return;
-      }
-      snap.forEach(docSnap => {
-        const d = docSnap.data();
-        const li = document.createElement("li");
-        li.textContent = `${d.name || "Suplemen"} — ${d.createdAt?.toDate?.().toLocaleString() || ""}`;
-        logHistoryListEl.appendChild(li);
-      });
-    } catch (err) {
-      console.error(err);
-      logHistoryListEl.innerHTML = "<li class='empty'>Gagal memuatkan log.</li>";
+async function loadLogHistory() {
+  if (!appState.user || !appState.logPeriod) return;
+  const { collection, query, where, orderBy, getDocs } = imports;
+
+  const todayListEl = document.getElementById("log-history-today");
+  const pastListEl = document.getElementById("log-history-past");
+
+  todayListEl.innerHTML = "<li>Memuatkan...</li>";
+  pastListEl.innerHTML = "";
+
+  try {
+    const q = query(
+      collection(db, "suplemenLogs"),
+      where("userId", "==", appState.user.uid),
+      where("period", "==", appState.logPeriod),
+      orderBy("createdAt", "desc")
+    );
+    const snap = await getDocs(q);
+
+    todayListEl.innerHTML = "";
+    pastListEl.innerHTML = "";
+
+    if (snap.empty) {
+      todayListEl.innerHTML = "<li class='empty'>Tiada log hari ini.</li>";
+      pastListEl.innerHTML = "<li class='empty'>Tiada log hari-hari lepas.</li>";
+      return;
     }
+
+    const todayKey = new Date().toDateString();
+
+    snap.forEach(docSnap => {
+      const d = docSnap.data();
+      const date = d.createdAt?.toDate?.() || new Date();
+      const li = document.createElement("li");
+      li.textContent = `${d.name || "Suplemen"} — ${date.toLocaleString()}`;
+
+      if (date.toDateString() === todayKey) {
+        todayListEl.appendChild(li);
+      } else {
+        pastListEl.appendChild(li);
+      }
+    });
+  } catch (err) {
+    console.error(err);
+    todayListEl.innerHTML = "<li class='empty'>Gagal memuatkan log.</li>";
   }
+}
+
 
   // ---------- Log Suplemen detail ----------
 
