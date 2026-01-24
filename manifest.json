@@ -1,6 +1,6 @@
 {
   "name": "Stressketiga",
-  "short_name": "Stressketiga",
+  "short_name": "Nutrien & Air",
   "start_url": "./index.html",
   "display": "standalone",
   "background_color": "#020617",
@@ -18,3 +18,4 @@
     }
   ]
 }
+
